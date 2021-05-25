@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="地址设置">
+        <EditTextPreference
+            android:dialogTitle="输入ip地址"
+            android:key="edittext_preference"
+            android:summary=""
+            android:title="ip地址" />
+        <EditTextPreference
+            android:dialogTitle="输入中控机地址"
+            android:key="edittext_preference"
+            android:summary=""
+            android:title="中控机地址" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

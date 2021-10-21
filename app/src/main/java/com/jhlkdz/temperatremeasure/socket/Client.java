@@ -7,6 +7,7 @@ import android.os.Handler;
 import com.jhlkdz.temperatremeasure.socket.api.Response;
 import com.jhlkdz.temperatremeasure.socket.util.CommandsUtil;
 import com.jhlkdz.temperatremeasure.socket.util.ResponseUtil;
+import com.jhlkdz.temperatremeasure.util.ConverseUtil;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -78,6 +79,19 @@ public class Client {
     private Context context;
 
     public List<Response> executeStartCheck(int address, List<Integer> list, Context context, ProgressDialog pd)throws IOException{
+
+        if (context==null && pd == null){
+            byte[] bytes = CommandsUtil.getStartCheck(address,list);
+            out.write(bytes);
+            out.flush();
+            List<Response> res = new ArrayList<>();
+            for(int i=0;i<list.size()+2;i++){
+                Response response = ResponseUtil.bytesToResponse(getResponse());
+                res.add(response);
+            }
+            return res;
+        }
+
         this.pd = pd;
         this.context = context;
 
@@ -139,15 +153,40 @@ public class Client {
     }
 
     private byte[] getResponse()throws IOException{
+
+//        Response response = new Response();
+//        response.setBeginFlag(bytes[0]);
+//        response.setResponseFlag(bytes[1]);
+//        response.setOperationType(bytes[2]);
+//        response.setAddress(bytes[3]);
+//        response.setParamLength(bytes[4]);
+//        int len = bytes[4];
+//        int index = 5;
+//        List<Byte> list = new ArrayList<>();
+//        for(int i=0;i<len;i++){
+//            list.add(bytes[index]);
+//            index++;
+//        }
+//        response.setParams(list);
+//        response.setCRC(bytes[index]);
+//        response.setEndFlag(bytes[index+1]);
+//        return response;
+
         byte[] res = new byte[300];
-        int index = 0;
+        int index = -1;
         byte[] bytes = new byte[1];
         while (in.read(bytes)!=-1){
-            res[index] = bytes[0];
             index++;
-            if("ffffffa5".equals(Integer.toHexString(bytes[0]))){
+            res[index] = bytes[0];
+            if (index==4)
                 break;
-            }
+        }
+        Response response = new Response();
+        response.setParamLength(res[4]);
+        for (int i=0;i<response.getParamLength()+2;i++){
+            index++;
+            in.read(bytes);
+            res[index] = bytes[0];
         }
         return res;
     }

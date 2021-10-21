@@ -82,17 +82,21 @@ public class CheckInfoServiceImpl implements CheckInfoService {
         }
         //out data
         Response outDataResponse = client.executeOuterData(address);
+        System.out.println("outDataResponse");
+        System.out.println(outDataResponse);
 
         if (!outDataResponse.isValidOutdata()){
             return null;
         }
         List<Byte> outParams = outDataResponse.getParams();
 
-        checkInfo.setOut_temperature(ConverseUtil.byteToTemp(outParams.get(10),outParams.get(9)));
+        checkInfo.setOut_temperature((256*ConverseUtil.ByteToInt(outParams.get(9))+ConverseUtil.ByteToInt(outParams.get(10)))/10.0f);
+        checkInfo.setOut_humidity((256*ConverseUtil.ByteToInt(outParams.get(11))+ConverseUtil.ByteToInt(outParams.get(12)))/10.0f);
+        //checkInfo.setOut_temperature(ConverseUtil.byteToTemp(outParams.get(10),outParams.get(9)));
         //checkInfo.setOut_humidity(ConverseUtil.byteToHumid(outParams.get(11),outParams.get(12)));
         int position = (outParams.get(3)&0x80)>0?1:0;
         int fj = outParams.get(4);
-        checkInfo.setOut_humidity(ConverseUtil.getOutHumi(position,0,outParams.get(11),outParams.get(12),fj));
+        //checkInfo.setOut_humidity(ConverseUtil.getOutHumi(position,0,outParams.get(11),outParams.get(12),fj));
 
         int year = 2000+ConverseUtil.IntToTime(outParams.get(18));
         int month = ConverseUtil.IntToTime(outParams.get(17));
@@ -123,6 +127,7 @@ public class CheckInfoServiceImpl implements CheckInfoService {
 
             //inner data
             Response innerDataResponse = client.executeInnerData(address,index);
+            System.out.println("innerDataResponse");
             System.out.println(innerDataResponse);
             if(!innerDataResponse.isValidInnerData()){
                 return null;

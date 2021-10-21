@@ -40,7 +40,7 @@ public class CheckTask extends Thread {
         this.list = list;
 
         pd=p;
-        tTime = new TimeoutThread(context,p,5000+list.size()*40000,new TimeoutException("连接超时"));
+        tTime = new TimeoutThread(context,p,5000+list.size()*60000,new TimeoutException("连接超时"));
 
         checkInfoService = new CheckInfoServiceImpl(context,pd);
     }

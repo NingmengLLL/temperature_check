@@ -70,6 +70,8 @@ public class CommandsUtil {
     // 取内温内湿
     public static byte[] getInnerData(int address, int barnIndex){
         Command command = new Command(NO_RESPONSE_FLAG, INNER_DATA_COMMAND, (byte)address, (byte)0x01,Arrays.asList((byte)barnIndex));
+        System.out.println("inner_command");
+        System.out.println(command);
         return command.toBytes();
     }
 

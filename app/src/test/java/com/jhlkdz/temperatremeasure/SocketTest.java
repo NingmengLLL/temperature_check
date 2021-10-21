@@ -69,6 +69,15 @@ public class SocketTest {
     @Test
     public void test03()throws IOException{
         Client client = new Client("192.168.1.200", 1000);
+        Response res = client.executeHands(1,1,new int[]{1,1,1,1,1});
+        System.out.println(res);
+        List<Integer> temp = new ArrayList<>();
+        temp.add(1);
+        //client.executeStartCheck(1,temp,null,null);
+        Response res1 = client.executeOuterData(1);
+        System.out.println(res1);
+        Response res2 =client.executeSystemParam(1,0);
+        System.out.println(res2);
         Response response = client.executeInnerData(1,1);
         System.out.println(response);
         client.destroy();

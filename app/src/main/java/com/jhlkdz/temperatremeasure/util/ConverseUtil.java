@@ -170,7 +170,7 @@ public class ConverseUtil {
 
     public static float getNormalFloat(float f,int i){
         int c = (int)Math.pow(10,i);
-        return (float) (Math.round(f*c)/c);
+        return (float) ((Math.round(f*c))*0.1);
     }
 
     public static int[] pwdIntToArray(int q){
@@ -214,25 +214,45 @@ public class ConverseUtil {
         return first*10+second;
     }
 
+    // unsigned
+    public static int HexToInt(String hex){
+        int res = 0;
+        for (char c:hex.toCharArray()){
+            if (Character.isDigit(c)){
+                res = res*16+(c-'0');
+            }
+            else {
+                res = res*16+(c-'A'+10);
+            }
+        }
+        return res;
+    }
+
+    public static int ByteToInt(byte b){
+        return HexToInt(byteToHex(b));
+    }
+
     //内温内湿
     public static InnerTempHumi getInTempHumi(byte systemType, byte humiMode, byte fj, byte tmpl,
                                               byte temph, byte humh, byte huml){
         InnerTempHumi res = new InnerTempHumi();
-        res.setTemp(getTemp(tmpl,temph,humiMode));
-        if(systemType==9||systemType==8){
-            res.setHumi(getHumi(humh,huml,humiMode,0));
-        }else {
-            int n=-1;
-            if((humiMode&0x80)>0)
-                n=2;
-            else
-                n=1;
-            if((fj&0x7)==1)
-                n=2;
-            if(systemType==4&&(fj&0x7)==2)
-                n=0;
-            res.setHumi(getHumi(humh,huml,humiMode,n));
-        }
+        res.setTemp((ByteToInt(tmpl)*256+ByteToInt(temph))/10.0f);
+        res.setHumi((ByteToInt(humh)*256+ByteToInt(huml))/10.0f);
+//        res.setTemp(getTemp(tmpl,temph,humiMode));
+//        if(systemType==9||systemType==8){
+//            res.setHumi(getHumi(humh,huml,humiMode,0));
+//        }else {
+//            int n=-1;
+//            if((humiMode&0x80)>0)
+//                n=2;
+//            else
+//                n=1;
+//            if((fj&0x7)==1)
+//                n=2;
+//            if(systemType==4&&(fj&0x7)==2)
+//                n=0;
+//            res.setHumi(getHumi(humh,huml,humiMode,n));
+//        }
 
         return res;
     }

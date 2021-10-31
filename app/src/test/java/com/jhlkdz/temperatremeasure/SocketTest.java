@@ -44,7 +44,7 @@ public class SocketTest {
 //        System.out.println(ip);
 //        Client client = new Client(ip, 1000);
 //        Response response = client.executeHands(1);
-        Response response1 = client.executeSystemParam(1,3);
+        Response response1 = client.executeSystemParam(1,0,3);
 //        System.out.println(response);
         System.out.println(response1);
         client.destroy();
@@ -76,7 +76,7 @@ public class SocketTest {
         //client.executeStartCheck(1,temp,null,null);
         Response res1 = client.executeOuterData(1);
         System.out.println(res1);
-        Response res2 =client.executeSystemParam(1,0);
+        Response res2 =client.executeSystemParam(1,0,0);
         System.out.println(res2);
         Response response = client.executeInnerData(1,1);
         System.out.println(response);

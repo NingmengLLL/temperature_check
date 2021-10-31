@@ -42,7 +42,7 @@ public class InitTask extends Thread{
         try {
             Client client = new Client(loginInfo.getIp(),loginInfo.getPort());
             client.executeHands(loginInfo.getAddress(),loginInfo.getAccount(),loginInfo.getPassword());
-            Response systemParamResponse = client.executeSystemParam(loginInfo.getAddress(),barnIndex);
+            Response systemParamResponse = client.executeSystemParam(loginInfo.getAddress(),2,barnIndex);
             int type = systemParamResponse.getParams().get(2);
             Response response = client.executeInit(loginInfo.getAddress(),barnIndex);
             if (response!=null&&response.getOperationType()!=0x11){

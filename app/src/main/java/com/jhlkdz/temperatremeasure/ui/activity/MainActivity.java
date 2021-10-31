@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println(spLogin.getInt("ip2",0));
                     Client client = new Client(spLogin.getString("ip1",null),spLogin.getInt("ip2",0));
                     client.executeHands(spLogin.getInt("address",1),spLogin.getInt("account",0), ConverseUtil.pwdIntToArray(spLogin.getInt("password",0)));
-                    Response response = client.executeSystemParam(spLogin.getInt("address",0),0);
+                    Response response = client.executeSystemParam(spLogin.getInt("address",0),0,0);
                     System.out.println(response);
                     if(response.getOperationType()==0){
                         Message msg = new Message();

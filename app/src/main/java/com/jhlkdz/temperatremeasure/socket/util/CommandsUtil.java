@@ -45,8 +45,8 @@ public class CommandsUtil {
     }
 
     // 取系统参数
-    public static byte[] getSystemParamCommand(int address, int barnIndex) {
-        Command command = new Command(NO_RESPONSE_FLAG, SYSTEM_PARAM_COMMAND, (byte)address, (byte) 0x01, Arrays.asList((byte)barnIndex));
+    public static byte[] getSystemParamCommand(int address, int mod, int barnIndex) {
+        Command command = new Command(NO_RESPONSE_FLAG, SYSTEM_PARAM_COMMAND, (byte)address, (byte) 0x02, Arrays.asList((byte)mod,(byte)barnIndex));
         return command.toBytes();
     }
 

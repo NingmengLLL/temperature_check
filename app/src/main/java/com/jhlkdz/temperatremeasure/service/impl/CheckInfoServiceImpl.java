@@ -121,7 +121,7 @@ public class CheckInfoServiceImpl implements CheckInfoService {
             List<Float> temperatureList = new ArrayList<>();
 
             //取参数
-            Response systemParamResponse = client.executeSystemParam(address,index);
+            Response systemParamResponse = client.executeSystemParam(address,2,index);
             int temp= barnInfoService.addBarnInfo(systemParamResponse);
             checkInfo.setCid(temp);
 
@@ -248,10 +248,12 @@ public class CheckInfoServiceImpl implements CheckInfoService {
         Response outDataResponse = client.executeOuterData(address);
         List<Byte> outParams = outDataResponse.getParams();
         //外温外湿
-        checkInfo.setOut_temperature(ConverseUtil.byteToTemp(outParams.get(10),outParams.get(9)));
+        //checkInfo.setOut_temperature(ConverseUtil.byteToTemp(outParams.get(10),outParams.get(9)));
         int position = (outParams.get(3)&0x80)>0?1:0;
         int fj = outParams.get(4);
-        checkInfo.setOut_humidity(ConverseUtil.getOutHumi(position,0,outParams.get(11),outParams.get(12),fj));
+        //checkInfo.setOut_humidity(ConverseUtil.getOutHumi(position,0,outParams.get(11),outParams.get(12),fj));
+        checkInfo.setOut_temperature((256*ConverseUtil.ByteToInt(outParams.get(9))+ConverseUtil.ByteToInt(outParams.get(10)))/10.0f);
+        checkInfo.setOut_humidity((256*ConverseUtil.ByteToInt(outParams.get(11))+ConverseUtil.ByteToInt(outParams.get(12)))/10.0f);
 
         int year = 2000+ConverseUtil.IntToTime(outParams.get(18));
         int month = ConverseUtil.IntToTime(outParams.get(17));
@@ -288,7 +290,7 @@ public class CheckInfoServiceImpl implements CheckInfoService {
             res.add(barnId);
 
             //取参数
-            Response systemParamResponse = client.executeSystemParam(address,barnId);
+            Response systemParamResponse = client.executeSystemParam(address,2,barnId);
             int temp= barnInfoService.addBarnInfo(systemParamResponse);
             checkInfo.setCid(temp);
 

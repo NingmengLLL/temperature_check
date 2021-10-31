@@ -47,8 +47,8 @@ public class Client {
         return ResponseUtil.bytesToResponse(getResponse());
     }
 
-    public Response executeSystemParam(int address, int barnIndex)throws IOException{
-        byte[] bytes = CommandsUtil.getSystemParamCommand(address,barnIndex);
+    public Response executeSystemParam(int address, int mod, int barnIndex)throws IOException{
+        byte[] bytes = CommandsUtil.getSystemParamCommand(address,mod,barnIndex);
         out.write(bytes);
         out.flush();
         return ResponseUtil.bytesToResponse(getResponse());

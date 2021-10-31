@@ -26,6 +26,15 @@ public class ConverseUtil {
         return sb.toString().toUpperCase().trim();
     }
 
+    // 仓名
+    public static String byteToSingleChar(byte b){
+        String str = byteToHex(b);
+        if (str.equals("00"))
+            return "";
+        int res = Integer.parseInt(str);
+        return String.valueOf(res-48);
+    }
+
     public static float byteToTemp(byte h,byte l){// 00 F0  0 240
         if(h==127&&l==-1){
             return 888f;

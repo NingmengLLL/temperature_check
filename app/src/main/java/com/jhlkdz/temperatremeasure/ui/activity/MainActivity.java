@@ -132,6 +132,18 @@ public class MainActivity extends AppCompatActivity {
 
                         List<Byte> params = response.getParams();
                         int numOfBarns = params.get(0);
+                        for (int i=0;i<=(numOfBarns-1)/16;i++){
+                            Response nameRes = client.executeSystemParam(spLogin.getInt("address",0),1,i/16);
+                            List<Byte> nameList = nameRes.getParams();
+                            for (int j=0;j<nameList.size();j+=4){
+                                String one = ConverseUtil.byteToSingleChar(nameList.get(j));
+                                String two = ConverseUtil.byteToSingleChar(nameList.get(j+1));
+                                String three = ConverseUtil.byteToSingleChar(nameList.get(j+2));
+                                String four = ConverseUtil.byteToSingleChar(nameList.get(j+3));
+                                String name = one+two+three+four;
+                                System.out.println("newName"+name);
+                            }
+                        }
                         for(int i=0;i<numOfBarns;i++){
                             list.add((i+1) + " 仓");
                         }

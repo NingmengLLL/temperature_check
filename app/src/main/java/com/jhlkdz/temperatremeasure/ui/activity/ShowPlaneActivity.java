@@ -58,6 +58,7 @@ public class ShowPlaneActivity extends AppCompatActivity {
     HashMap<Integer,List<CheckInfo>> datas;
     private boolean isSimulate;
     String[] barns;
+    String[] barnNames;
     List<String> times = new ArrayList<>();//spinner2
     private float[][][] data;
 
@@ -149,12 +150,16 @@ public class ShowPlaneActivity extends AppCompatActivity {
         }
 
         ArrayList<Integer> barnList = intent.getIntegerArrayListExtra("barnList");
+        ArrayList<String> barnNameList = intent.getStringArrayListExtra("barnNameList");
         barns = new String[barnList.size()];
+        barnNames = new String[barnList.size()];
         for(int i=0;i<barnList.size();i++){
             barns[i] = String.valueOf(barnList.get(i));
+            barnNames[i] = barnNameList.get(barnList.get(i)-1);
         }
 
-        SpinnerAdapter spinnerAdapter1 = new com.jhlkdz.temperatremeasure.ui.adapter.SpinnerAdapter(this,barns);
+
+        SpinnerAdapter spinnerAdapter1 = new com.jhlkdz.temperatremeasure.ui.adapter.SpinnerAdapter(this,barnNames);
         spinner1.setAdapter(spinnerAdapter1);
 
         currentBarnIndex = 0;
@@ -386,7 +391,7 @@ public class ShowPlaneActivity extends AppCompatActivity {
                 linearTitle.addView(temp);
             }
             showLinear2.addView(linearTitle);
-            float levelMax = levelDatas.get(i+1).getMax();
+            float levelMax = levelDatas.get(level-i).getMax();
             for(int j=row-1;j>=0;j--){
                 LinearLayout linearLayout = new LinearLayout(this);
                 linearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -423,7 +428,7 @@ public class ShowPlaneActivity extends AppCompatActivity {
             LinearLayout dataColumn = new LinearLayout(this);
             dataColumn.setOrientation(LinearLayout.VERTICAL);
             dataColumn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.MATCH_PARENT));
-            LevelData levelData = levelDatas.get(i+1);
+            LevelData levelData = levelDatas.get(level-i);
             String[] temp = {""+(i+1)+"层",""+levelData.getMax(),""+levelData.getMin(),""+levelData.getAverage()};
             for(int j=0;j<4;j++){
                 TextView text=new TextView(this);

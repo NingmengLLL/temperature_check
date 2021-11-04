@@ -29,10 +29,10 @@ public class ConverseUtil {
     // 仓名
     public static String byteToSingleChar(byte b){
         String str = byteToHex(b);
-        if (str.equals("00"))
+        if (str.equals("00")||str.equals("FF"))
             return "";
-        int res = Integer.parseInt(str);
-        return String.valueOf(res-48);
+        int res = HexToInt(str);
+        return String.valueOf((char)res);
     }
 
     public static float byteToTemp(byte h,byte l){// 00 F0  0 240
@@ -147,6 +147,7 @@ public class ConverseUtil {
                         num--;
                     }
                     else {
+                        System.out.print(temp+",");
                         if(temp>max)
                             max = temp;
                         if(temp<min)
@@ -155,7 +156,8 @@ public class ConverseUtil {
                     }
                 }
             }
-            result.put(i+1,new LevelData(max,min,getNormalFloat(sum/num,1)));
+            System.out.println(max+" "+min);
+            result.put(row-i,new LevelData(max,min,getNormalFloat(sum/num,1)));
         }
         return result;
     }

@@ -58,7 +58,7 @@ public class CheckInfoServiceImpl implements CheckInfoService {
     }
 
     @Override
-    public List<Integer> addCheckInfo(List<Integer> barns, LoginInfo loginInfo, TimeoutThread tTime) throws UnknownHostException, IOException {
+    public List<Integer> addCheckInfo(List<Integer> barns, List<String> nameList, LoginInfo loginInfo, TimeoutThread tTime) throws UnknownHostException, IOException {
 
         // 返回值
         //正常集合
@@ -73,7 +73,7 @@ public class CheckInfoServiceImpl implements CheckInfoService {
             return res;
 
         //start check
-        List<Response> startCheckResponses = client.executeStartCheck(address,barns,context,pd);
+        List<Response> startCheckResponses = client.executeStartCheck(address,barns,nameList,context,pd);
         for(Response r:startCheckResponses){
             if(r.getOperationType()==0x15&&r.getParams().get(0)==0x01){
                 res.add((int)r.getParams().get(1)+1);

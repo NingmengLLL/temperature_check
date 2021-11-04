@@ -92,6 +92,7 @@ public class ShowActivity extends AppCompatActivity {
     List<String> times = new ArrayList<>();//spinner2
 
     String[] barns;
+    String[] barnNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,12 +153,15 @@ public class ShowActivity extends AppCompatActivity {
         }
 
         ArrayList<Integer> barnList = intent.getIntegerArrayListExtra("barnList");
+        ArrayList<String> barnNameList = intent.getStringArrayListExtra("barnNameList");
         barns = new String[barnList.size()];
+        barnNames = new String[barnList.size()];
         for(int i=0;i<barnList.size();i++){
             barns[i] = String.valueOf(barnList.get(i));
+            barnNames[i] = barnNameList.get(barnList.get(i)-1);
         }
 
-        SpinnerAdapter spinnerAdapter1 = new com.jhlkdz.temperatremeasure.ui.adapter.SpinnerAdapter(this,barns);
+        SpinnerAdapter spinnerAdapter1 = new com.jhlkdz.temperatremeasure.ui.adapter.SpinnerAdapter(this,barnNames);
         //ArrayAdapter<String> adapter1=new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,barns);
         //adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner1.setAdapter(spinnerAdapter1);
@@ -388,7 +392,7 @@ public class ShowActivity extends AppCompatActivity {
             LinearLayout dataColumn = new LinearLayout(this);
             dataColumn.setOrientation(LinearLayout.VERTICAL);
             dataColumn.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.MATCH_PARENT));
-            LevelData levelData = levelDatas.get(i+1);
+            LevelData levelData = levelDatas.get(level-i);
             String[] temp = {""+(i+1)+"层",""+levelData.getMax(),""+levelData.getMin(),""+levelData.getAverage()};
             for(int j=0;j<4;j++){
                 TextView text=new TextView(this);

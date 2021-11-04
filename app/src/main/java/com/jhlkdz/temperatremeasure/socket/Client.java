@@ -78,7 +78,7 @@ public class Client {
     private ProgressDialog pd;
     private Context context;
 
-    public List<Response> executeStartCheck(int address, List<Integer> list, Context context, ProgressDialog pd)throws IOException{
+    public List<Response> executeStartCheck(int address, List<Integer> list,List<String> nameList, Context context, ProgressDialog pd)throws IOException{
 
         if (context==null && pd == null){
             byte[] bytes = CommandsUtil.getStartCheck(address,list);
@@ -95,7 +95,8 @@ public class Client {
         this.pd = pd;
         this.context = context;
 
-        setTitle(pd,"正在检测"+list.get(0)+"仓"+"(1/"+list.size()+")");
+        setTitle(pd,"正在检测"+nameList.get(0)+"(1/"+list.size()+")");
+        int index = 1;
         pd.setProgress(20);
         sleep(300);
         pd.setProgress(40);
@@ -111,7 +112,7 @@ public class Client {
                 sleep(300);
                 pd.setProgress(100);
                 sleep(300);
-                setTitle(pd, "正在检测" + (response.getParams().get(1) + 1) + "仓" + "(" + i + "/" + list.size() + ")");
+                setTitle(pd, "正在检测" + nameList.get(index++) + "(" + i + "/" + list.size() + ")");
                 pd.setProgress(20);
                 sleep(300);
                 pd.setProgress(40);

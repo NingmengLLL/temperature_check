@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.NoRouteToHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -26,6 +27,7 @@ public class CheckTask extends Thread {
     private SharedPreferences spLogin;
     private Context context;
     private List<Integer> list;
+    private List<String> nameList;
 
     boolean run = true;
     ProgressDialog pd;
@@ -34,13 +36,19 @@ public class CheckTask extends Thread {
 
     private TimeoutThread tTime;
 
-    public CheckTask(Context context, SharedPreferences spLogin, List<Integer> list, ProgressDialog p){
+    public CheckTask(Context context, SharedPreferences sp,SharedPreferences spLogin, List<Integer> list, ProgressDialog p){
         this.spLogin = spLogin;
         this.context = context;
         this.list = list;
 
         pd=p;
         tTime = new TimeoutThread(context,p,5000+list.size()*60000,new TimeoutException("连接超时"));
+        String names = sp.getString("barnList", "");
+        List<String> tempList = new ArrayList<>(Arrays.asList(names.split(",")));
+        nameList = new ArrayList<>();
+        for (int i:list){
+            nameList.add(tempList.get(i-1));
+        }
 
         checkInfoService = new CheckInfoServiceImpl(context,pd);
     }
@@ -62,7 +70,7 @@ public class CheckTask extends Thread {
 
         setTitle(pd,"正在检测");
         try {
-            passList = checkInfoService.addCheckInfo(list,loginInfo,tTime);
+            passList = checkInfoService.addCheckInfo(list,nameList,loginInfo,tTime);
         } catch (IOException e) {
             pd.cancel();
             dialog("网络无法连接到主机！");
@@ -88,20 +96,20 @@ public class CheckTask extends Thread {
         String res = "";
         for(int i=0;i<passList.size();i++){
             if (i==passList.size()-1)
-                passStr=passStr+passList.get(i);
+                passStr=passStr+nameList.get(passList.get(i)-1);
             else
-                passStr=passStr+passList.get(i)+",";
+                passStr=passStr+nameList.get(passList.get(i)-1)+",";
         }
         for(int i=0;i<failList.size();i++){
             if (i==failList.size()-1)
-                failStr=failStr+failList.get(i);
+                failStr=failStr+nameList.get(failList.get(i)-1);
             else
-                failStr=failStr+failList.get(i)+",";
+                failStr=failStr+nameList.get(failList.get(i)-1)+",";
         }
         if (passStr!="")
-            res=res+passStr+"仓检测完成！";
+            res=res+passStr+"检测完成！";
         if (failStr!="")
-            res=res+failStr+"仓检测失败！";
+            res=res+failStr+"检测失败！";
 
         if (isCompleted){
             dialog(res);

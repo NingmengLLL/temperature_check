@@ -1,5 +1,6 @@
 package com.jhlkdz.temperatremeasure.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -222,6 +223,7 @@ public class LoginActivity extends Activity {
 
     }
 
+    @SuppressLint("HandlerLeak")
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {

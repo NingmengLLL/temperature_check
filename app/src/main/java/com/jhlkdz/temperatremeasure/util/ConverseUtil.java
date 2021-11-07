@@ -26,6 +26,15 @@ public class ConverseUtil {
         return sb.toString().toUpperCase().trim();
     }
 
+    // 仓名
+    public static String byteToSingleChar(byte b){
+        String str = byteToHex(b);
+        if (str.equals("00")||str.equals("FF"))
+            return "";
+        int res = HexToInt(str);
+        return String.valueOf((char)res);
+    }
+
     public static float byteToTemp(byte h,byte l){// 00 F0  0 240
         if(h==127&&l==-1){
             return 888f;
@@ -138,6 +147,7 @@ public class ConverseUtil {
                         num--;
                     }
                     else {
+                        System.out.print(temp+",");
                         if(temp>max)
                             max = temp;
                         if(temp<min)
@@ -146,7 +156,8 @@ public class ConverseUtil {
                     }
                 }
             }
-            result.put(i+1,new LevelData(max,min,getNormalFloat(sum/num,1)));
+            System.out.println(max+" "+min);
+            result.put(row-i,new LevelData(max,min,getNormalFloat(sum/num,1)));
         }
         return result;
     }

@@ -46,12 +46,14 @@ import com.jhlkdz.temperatremeasure.widget.LoadingView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         sp = getSharedPreferences("choose", Context.MODE_PRIVATE);
         spLogin = getSharedPreferences("login",Context.MODE_PRIVATE);
 
-        if(sp.getStringSet("barnList",null)==null){
+        if(spLogin.getBoolean("needRefresh", true) || sp.getString("barnList", "").equals("")){
          //   loading.show();
             Callable<String> call = new Callable<String>() {
                 public String call() throws Exception {
@@ -132,8 +134,23 @@ public class MainActivity extends AppCompatActivity {
 
                         List<Byte> params = response.getParams();
                         int numOfBarns = params.get(0);
-                        for(int i=0;i<numOfBarns;i++){
-                            list.add((i+1) + " 仓");
+                        int num = 0;
+                        for (int i=0;i<=(numOfBarns-1)/16;i++){
+                            Response nameRes = client.executeSystemParam(spLogin.getInt("address",0),1,i/16);
+                            System.out.println("name"+nameRes);
+                            List<Byte> nameList = nameRes.getParams();
+                            for (int j=0;j<nameList.size();j+=4){
+                                String one = ConverseUtil.byteToSingleChar(nameList.get(j));
+                                String two = ConverseUtil.byteToSingleChar(nameList.get(j+1));
+                                String three = ConverseUtil.byteToSingleChar(nameList.get(j+2));
+                                String four = ConverseUtil.byteToSingleChar(nameList.get(j+3));
+                                String name = one+two+three+four;
+                                num++;
+                                if (num>numOfBarns)
+                                    break;
+                                System.out.println("newName"+name);
+                                list.add(name+" 仓");
+                            }
                         }
                     }
                     return "";
@@ -154,19 +171,20 @@ public class MainActivity extends AppCompatActivity {
             // 关闭线程池
             executor.shutdown();
 
-            sp.edit().putStringSet("barnList",new HashSet<>(list)).apply();
+            String barnList = "";
+            for (String str: list){
+                barnList+=str+",";
+            }
+            barnList = barnList.substring(0,barnList.length()-1);
+            sp.edit().putString("barnList",barnList).apply();
+            spLogin.edit().putBoolean("needRefresh",false).apply();
+            System.out.println("????????????????");
         }
         else {
-            ArrayList<String> temp = new ArrayList<>(sp.getStringSet("barnList",null));
-            //Collections.sort(temp);
-            Collections.sort(temp, new Comparator<String>() {
-                @Override
-                public int compare(String s, String t1) {
-                    return Integer.valueOf(s.substring(0,s.length()-2))-Integer.valueOf(t1.substring(0,t1.length()-2));
-                }
-            });
-            System.out.println("排序!!!!!!!!!!!!:"+temp);
-            list = temp;
+            String temp = sp.getString("barnList","");
+            //System.out.println("tem-"+temp);
+            System.out.println("!!!!!!!!!!!!!!!");
+            list = new ArrayList<String>(Arrays.asList(temp.split(",")));
         }
 
         int spacing = (int)getResources().getDimension(R.dimen.spacing);
@@ -189,8 +207,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final String[] items = new String[]{"初始化"};
                 android.support.v7.app.AlertDialog.Builder builder1=new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
-                final int barnIndex = Integer.valueOf(list.get(i).substring(0,1));
-                builder1.setTitle("请选择对"+barnIndex+"仓要进行的操作");
+                final int barnIndex = i+1;
+                builder1.setTitle("请选择对"+list.get(i)+"要进行的操作");
                 builder1.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -281,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
                     pd.show();
 
                     // 在此启动一个线程
-                    CheckTask t = new CheckTask(MainActivity.this,spLogin,list,pd);
+                    CheckTask t = new CheckTask(MainActivity.this,sp,spLogin,list,pd);
                     t.start();
 
                 }
@@ -293,18 +311,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 HashMap<Integer, Boolean> map = listViewAdapter.getIsSelected();
-                final ArrayList<Integer> list = new ArrayList<>();
+                final ArrayList<Integer> barnList = new ArrayList<>();
                 for (int i : map.keySet()) {
                     if (map.get(i))
-                        list.add(i+1);
+                        barnList.add(i+1);
                 }
-                if(list.size()==0){
+                if(barnList.size()==0){
                     Toast.makeText(MainActivity.this, "请选择仓号", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(MainActivity.this, list.toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, list.toString(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(MainActivity.this,ShowActivity.class);
-                    intent.putIntegerArrayListExtra("barnList",list);
+                    intent.putIntegerArrayListExtra("barnList",barnList);
+                    intent.putStringArrayListExtra("barnNameList",list);
                     startActivity(intent);
                 }
 
@@ -396,18 +415,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 HashMap<Integer, Boolean> map = listViewAdapter.getIsSelected();
-                final ArrayList<Integer> list = new ArrayList<>();
+                final ArrayList<Integer> barnList = new ArrayList<>();
                 for (int i : map.keySet()) {
                     if (map.get(i))
-                        list.add(i+1);
+                        barnList.add(i+1);
                 }
-                if(list.size()==0){
+                if(barnList.size()==0){
                     Toast.makeText(MainActivity.this, "请选择仓号", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Toast.makeText(MainActivity.this, list.toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, list.toString(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(MainActivity.this,ShowPlaneActivity.class);
-                    intent.putIntegerArrayListExtra("barnList",list);
+                    intent.putIntegerArrayListExtra("barnList",barnList);
+                    intent.putStringArrayListExtra("barnNameList",list);
                     startActivity(intent);
                 }
 
@@ -432,6 +452,7 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
             spLogin.edit().putBoolean("hasLogin",false).apply();
+            spLogin.edit().putBoolean("needRefresh",true).apply();
             Intent intent = new Intent(MainActivity.this,LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

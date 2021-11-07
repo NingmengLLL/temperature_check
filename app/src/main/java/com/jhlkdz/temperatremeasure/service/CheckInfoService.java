@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface CheckInfoService {
 
-    public List<Integer> addCheckInfo(List<Integer> barns, LoginInfo loginInfo, TimeoutThread tTime) throws UnknownHostException, IOException;
+    public List<Integer> addCheckInfo(List<Integer> barns,List<String> nameList, LoginInfo loginInfo, TimeoutThread tTime) throws UnknownHostException, IOException;
 
     public ArrayList<Integer> syncCheckInfo(LoginInfo loginInfo)throws UnknownHostException, IOException;
 

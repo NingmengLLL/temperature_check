@@ -207,8 +207,8 @@ public class MainActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 final String[] items = new String[]{"初始化"};
                 android.support.v7.app.AlertDialog.Builder builder1=new android.support.v7.app.AlertDialog.Builder(MainActivity.this);
-                final int barnIndex = Integer.valueOf(list.get(i).substring(0,1));
-                builder1.setTitle("请选择对"+barnIndex+"仓要进行的操作");
+                final int barnIndex = i+1;
+                builder1.setTitle("请选择对"+list.get(i)+"要进行的操作");
                 builder1.setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

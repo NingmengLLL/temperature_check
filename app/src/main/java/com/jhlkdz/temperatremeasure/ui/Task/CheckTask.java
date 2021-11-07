@@ -28,6 +28,7 @@ public class CheckTask extends Thread {
     private Context context;
     private List<Integer> list;
     private List<String> nameList;
+    private List<String> tempList;
 
     boolean run = true;
     ProgressDialog pd;
@@ -44,7 +45,7 @@ public class CheckTask extends Thread {
         pd=p;
         tTime = new TimeoutThread(context,p,5000+list.size()*60000,new TimeoutException("连接超时"));
         String names = sp.getString("barnList", "");
-        List<String> tempList = new ArrayList<>(Arrays.asList(names.split(",")));
+        tempList = new ArrayList<>(Arrays.asList(names.split(",")));
         nameList = new ArrayList<>();
         for (int i:list){
             nameList.add(tempList.get(i-1));
@@ -96,15 +97,15 @@ public class CheckTask extends Thread {
         String res = "";
         for(int i=0;i<passList.size();i++){
             if (i==passList.size()-1)
-                passStr=passStr+nameList.get(passList.get(i)-1);
+                passStr=passStr+tempList.get(passList.get(i)-1);
             else
-                passStr=passStr+nameList.get(passList.get(i)-1)+",";
+                passStr=passStr+tempList.get(passList.get(i)-1)+",";
         }
         for(int i=0;i<failList.size();i++){
             if (i==failList.size()-1)
-                failStr=failStr+nameList.get(failList.get(i)-1);
+                failStr=failStr+tempList.get(failList.get(i)-1);
             else
-                failStr=failStr+nameList.get(failList.get(i)-1)+",";
+                failStr=failStr+tempList.get(failList.get(i)-1)+",";
         }
         if (passStr!="")
             res=res+passStr+"检测完成！";
